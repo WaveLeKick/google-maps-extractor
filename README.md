@@ -1,84 +1,95 @@
-[Google Maps Extractor](https://apify.com/ghost_banana/google-maps-extractor?fpr=data)
+[Google Maps Extractor](https://apify.com/cloway/google-maps-extractor?fpr=data)
 
-Extract business data from Google Maps at scale. Search by keyword + location, get structured data for every result.
+Extract business data from Google Maps search results for any Brazilian city. Get structured data including business name, rating, reviews, address, phone, website, category, and coordinates.
 
-## What does it do?
+## What it does
 
-This actor searches Google Maps for businesses matching your query and extracts:
+This actor searches Google Maps for businesses in Brazilian cities and extracts structured data from the results. Simply provide a search query like "restaurantes em Sao Paulo" or "dentistas Curitiba" and get back a clean JSON dataset.
 
-- **Business name** and category
-- **Full address** and coordinates (lat/lng)
-- **Phone number** and website
-- **Rating** and review count
-- **Opening hours**
-- **Price level** (when available)
-- **Top reviews** (optional)
+### Data extracted for each business
+
+| Field | Description |
+| --- | --- |
+| name | Business name |
+| rating | Average rating (1-5 stars) |
+| reviewCount | Total number of reviews |
+| address | Full street address |
+| phone | Phone number |
+| website | Website URL |
+| category | Business category (e.g., "Restaurante italiano") |
+| latitude | GPS latitude |
+| longitude | GPS longitude |
+| googleMapsUrl | Direct link to Google Maps |
+
+## Use cases
+
+- **Lead generation**: Build targeted lists of businesses by city and category for sales outreach
+- **Market research**: Analyze business density, ratings, and competition across Brazilian cities
+- **Competitor analysis**: Monitor competitors' ratings, review counts, and presence
+- **Directory building**: Create business directories for specific niches and locations
+- **Local SEO analysis**: Audit local search results for SEO strategy
 
 ## Input
 
-| Field | Type | Description | Default |
-| --- | --- | --- | --- |
-| `searchQueries` | Array | Search queries like "restaurants in Austin TX" | Required |
-| `maxResults` | Integer | Max results per query (1-500) | 100 |
-| `language` | String | Language code (en, es, fr, etc.) | en |
-| `includeReviews` | Boolean | Extract top 5 reviews per business | false |
+| Field | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| query | string | Yes | - | Search query (e.g., "restaurantes em Sao Paulo") |
+| maxResults | integer | No | 10 | Maximum results to extract (1-20) |
+| language | string | No | pt-BR | Language for results |
+| country | string | No | BR | Country code |
 
-### Example Input
+### Example input
 
 ```
 {
-    "searchQueries": [
-        "plumbers in Miami FL",
-        "coffee shops in Portland OR"
-    ],
-    "maxResults": 50,
-    "language": "en",
-    "includeReviews": true
+    "query": "restaurantes em Sao Paulo",
+    "maxResults": 15,
+    "language": "pt-BR",
+    "country": "BR"
 }
 ```
 
 ## Output
 
-Each result is a JSON object:
+The actor outputs a dataset with one entry per business found:
 
 ```
 {
-    "name": "Joe's Plumbing",
-    "category": "Plumber",
-    "address": "123 Main St, Miami, FL 33101",
-    "phone": "(305) 555-1234",
-    "website": "joesplumbing.com",
-    "rating": 4.8,
-    "reviewCount": 342,
-    "openingHours": "Open 24 hours",
-    "priceLevel": "$$",
-    "latitude": 25.7617,
-    "longitude": -80.1918,
-    "searchQuery": "plumbers in Miami FL",
-    "topReviews": [
-        {
-            "author": "John D.",
-            "stars": 5,
-            "text": "Great service, fast response time!",
-            "date": "2 weeks ago"
-        }
-    ]
+    "name": "Restaurante Fasano",
+    "rating": 4.6,
+    "reviewCount": 2847,
+    "address": "R. Vittorio Fasano, 88 - Jardim Paulista, Sao Paulo - SP",
+    "phone": "(11) 3896-4000",
+    "website": "https://www.fasano.com.br",
+    "category": "Restaurante italiano",
+    "latitude": -23.5629,
+    "longitude": -46.6714,
+    "googleMapsUrl": "https://www.google.com/maps/search/Restaurante+Fasano",
+    "query": "restaurantes em Sao Paulo",
+    "scrapedAt": "2024-01-15T10:30:00.000Z"
 }
 ```
 
-## Use Cases
+## Sample queries
 
-- **Lead generation**: Find businesses by industry and location
-- **Market research**: Analyze competitor ratings, reviews, pricing
-- **Data enrichment**: Add phone/website/coordinates to existing business lists
-- **Local SEO**: Monitor business rankings and reviews across locations
+- `restaurantes em Sao Paulo`
+- `dentistas Curitiba`
+- `hoteis Rio de Janeiro`
+- `advogados Brasilia`
+- `academias Belo Horizonte`
+- `pet shops Florianopolis`
+
+## Limitations
+
+- Maximum 20 results per search (first page of Google Maps results)
+- Google may occasionally block requests; the actor handles this gracefully
+- For best results on the Apify platform, enable proxy in your Actor run configuration
+- Results depend on Google's current page structure; the actor uses multiple extraction strategies as fallback
 
 ## Pricing
 
-Pay per result. Approximately $1-3 per 100 businesses extracted (depends on Apify compute usage).
+This actor is free to use. You only pay for the Apify platform compute units consumed during the run.
 
-## Notes
+---
 
-- Results depend on Google Maps availability for the search area
-- Very broad queries may return fewer results than expected
-- Enable "Include Reviews" for richer data (adds ~2s per business)
+Built by [NomePronto](https://nomepronto.com.br) - Your business naming and registration partner in Brazil.
